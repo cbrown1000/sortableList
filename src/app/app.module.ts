@@ -1,10 +1,11 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SortableListComponent } from './sortable-list/sortable-list.component';
-import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ListService } from './services/list.service';
 
 @NgModule({
   declarations: [
@@ -16,7 +17,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     BrowserAnimationsModule,
     DragDropModule
   ],
-  providers: [],
+  providers: [ListService ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
