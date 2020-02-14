@@ -9,11 +9,12 @@ import { ListItem } from '../shared/list-item.model';
 export class ListService {
   listChanged = new Subject<ListItem[]>();
   private dbName = 'ListChallenge';
+  private db: IDBDatabase = null;
 
 
   constructor() {
     console.log('constructor()');
-    this.listChanged.next([new ListItem(1, 'Loading...')]);
+    this.listChanged.next([new ListItem(1, 1, 'Loading...')]);
 
     this.getDB();
   }
@@ -22,13 +23,13 @@ export class ListService {
     //console.log('getting DB...');
     var dbRequest = window.indexedDB.open(this.dbName, 1);
     dbRequest.onerror = (event) =>{
-      this.listChanged.next([new ListItem(1, 'The list failed to load from indexedDB')]);
+      this.listChanged.next([new ListItem(1, 1, 'The list failed to load from indexedDB')]);
     }
 
     dbRequest.onsuccess =  (event) => {
       console.log('dbRequest.onsuccess');
-      var db: IDBDatabase = event.target.result;
-      this.getList(db);
+      this.db= event.target.result;
+      this.getList(this.db);
 
     }
 
@@ -37,9 +38,9 @@ export class ListService {
       var db: IDBDatabase = event.target.result;
 
       //Add some data
-      var listFromDB = [new ListItem(1, 'Option #1!'),
-      new ListItem(2, 'Option 2'),
-      new ListItem(3, 'Option #3-adfdaf  ')];
+      var listFromDB = [new ListItem(1, 1, 'Option #1!'),
+      new ListItem(2, 2, 'Option 2'),
+      new ListItem(3, 3, 'Option #3-adfdaf  ')];
 
       this.storeList(db, listFromDB);
 
@@ -53,17 +54,19 @@ export class ListService {
     var objStore = transaction.objectStore("list");
     var request = objStore.getAll();
     request.onerror = (event) => {
-      this.listChanged.next([new ListItem(1, 'The list failed to load from indexedDB')]);
+      this.listChanged.next([new ListItem(1, 1, 'The list failed to load from indexedDB')]);
     }
 
     request.onsuccess = (event) => {
       var items = event.target.result;
+      items.sort(ListItem.sortCompare);
       console.log('Got results:  ' + items);
+
       this.listChanged.next(items.slice());
     }
   }
   /* Store the passed in list */
-  storeList(db: IDBDatabase, items: ListItem[]) {
+  private storeList(db: IDBDatabase, items: ListItem[]) {
     var objStore = db.createObjectStore("list", { keyPath: "id" });
 
     objStore.createIndex("name", "name", { unique: false });
@@ -74,6 +77,38 @@ export class ListService {
       });
     }
 
+  }
+
+  /**
+   * Clearing then adding all items.
+   * @param items
+   */
+  persistChanges(items: ListItem[]) {
+    console.log('persistChanges()!');
+    //Persist Changes
+    this.updateSortOrder(items);
+
+    var listObjStore = this.db.transaction("list", "readwrite").objectStore("list");
+
+    var clr = listObjStore.clear();
+
+    clr.onsuccess = (event) => {
+      items.forEach((item) => {
+        listObjStore.add(item);
+
+      })
+    }
+
+    //Refresh List
+    this.getList(this.db);
+  }
+
+  private updateSortOrder(items: ListItem[]) {
+    var i = 1;
+
+    items.forEach((item) => {
+      item.sortNum = i++;
+    })
   }
 
 }

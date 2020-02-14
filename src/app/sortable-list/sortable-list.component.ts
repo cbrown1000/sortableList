@@ -33,5 +33,6 @@ export class SortableListComponent implements OnInit, OnDestroy {
   //Taken from https://material.angular.io/cdk/drag-drop/overview
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.list, event.previousIndex, event.currentIndex);
+    this.listService.persistChanges(this.list);
   }
 }
