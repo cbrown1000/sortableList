@@ -45,9 +45,15 @@ export class SortableListComponent implements OnInit, OnDestroy {
     this.listService.persistChanges(this.list);
   }
   addNew() {
-    this.list.push(new ListItem(this.newItem.id, this.newItem.sortNum, this.newItem.name));
-    var nextId = this.listService.getNextId();
+    var newId = this.listService.getNextId();
+    this.list.push(new ListItem(newId, newId, this.newItem.name));
+    var nextId = ++newId;
     this.newItem = new ListItem(nextId, nextId, '');
     this.persistChanges();
+  }
+
+  clearData() {
+    console.log('SortableListComponent.clearData()');
+    this.listService.clearData();
   }
 }

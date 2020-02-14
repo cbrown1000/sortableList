@@ -28,14 +28,14 @@ export class ListService {
 
     dbRequest.onsuccess =  (event) => {
       console.log('dbRequest.onsuccess');
-      this.db= event.target.result;
+      this.db = event.target['result'];
       this.getList(this.db);
 
     }
 
     dbRequest.onupgradeneeded = (event) => {
       console.log('onupgradeneeded');
-      var db: IDBDatabase = event.target.result;
+      var db: IDBDatabase = event.target['result'];
 
       //Add some data
       var listFromDB = [new ListItem(1, 1, 'Option #1!'),
@@ -58,7 +58,7 @@ export class ListService {
     }
 
     request.onsuccess = (event) => {
-      var items = event.target.result;
+      var items = event.target['result'];
       items.sort(ListItem.sortCompare);
       this.setNextId(items);
       this.listChanged.next(items.slice());
@@ -103,6 +103,19 @@ export class ListService {
     this.getList(this.db);
   }
 
+  clearData() {
+    console.log('Clear Data');
+    var listObjStore = this.db.transaction("list", "readwrite").objectStore("list");
+
+    var clr = listObjStore.clear();
+
+    clr.onsuccess = (event) => {
+    //Refresh List
+      this.getList(this.db);
+    }
+  }
+
+
   private updateSortOrder(items: ListItem[]) {
     var i = 1;
     items = items.filter(item => item.name !== '');
@@ -124,7 +137,7 @@ export class ListService {
       }
     });
 
-    return ++id;
+    this.nextId = ++id;
   }
 
 }

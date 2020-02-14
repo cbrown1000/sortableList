@@ -2,3 +2,8 @@
   <list-item *ngFor="let item of list" [item]="item" (persistChanges)="persistChanges()" cdkDrag></list-item>
   <list-item [item]="newItem" (persistChanges)="addNew()" cdkDrag></list-item>
 </div>
+<div>
+  <div mat-dialog-actions>
+    <button class="mat-flat-button mat-primary" mat-button (click)="clearData()">Clear</button>
+  </div>
+</div>
