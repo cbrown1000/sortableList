@@ -6,11 +6,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { SortableListComponent } from './sortable-list/sortable-list.component';
 import { ListService } from './services/list.service';
+import { ListItemComponent } from './list-item/list-item.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SortableListComponent
+    SortableListComponent,
+    ListItemComponent
   ],
   imports: [
     BrowserModule,
