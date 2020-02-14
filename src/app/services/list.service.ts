@@ -10,10 +10,10 @@ export class ListService {
   listChanged = new Subject<ListItem[]>();
   private dbName = 'ListChallenge';
   private db: IDBDatabase = null;
+  private nextId: number = 0;
 
 
   constructor() {
-    console.log('constructor()');
     this.listChanged.next([new ListItem(1, 1, 'Loading...')]);
 
     this.getDB();
@@ -60,8 +60,7 @@ export class ListService {
     request.onsuccess = (event) => {
       var items = event.target.result;
       items.sort(ListItem.sortCompare);
-      console.log('Got results:  ' + items);
-
+      this.setNextId(items);
       this.listChanged.next(items.slice());
     }
   }
@@ -96,6 +95,7 @@ export class ListService {
       items.forEach((item) => {
         listObjStore.add(item);
 
+
       })
     }
 
@@ -105,10 +105,26 @@ export class ListService {
 
   private updateSortOrder(items: ListItem[]) {
     var i = 1;
+    items = items.filter(item => item.name !== '');
 
     items.forEach((item) => {
       item.sortNum = i++;
     })
+  }
+
+  //This should probably just query the db; but don't have time to figure that out right now
+  public getNextId() {
+    return this.nextId;
+  }
+  setNextId(items: ListItem[]) {
+    var id: number = 0;
+    items.forEach(item => {
+      if (item.id > id) {
+        id = item.id;
+      }
+    });
+
+    return ++id;
   }
 
 }

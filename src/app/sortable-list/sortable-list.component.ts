@@ -13,8 +13,12 @@ export class SortableListComponent implements OnInit, OnDestroy {
 
   private list: ListItem[] = [];
   private listChangeSub: Subscription;
+  private newItem: ListItem = null;
+  constructor(private listService: ListService) {
+    var nextId = this.listService.getNextId();
+    this.newItem = new ListItem(nextId, nextId, '');
 
-  constructor(private listService: ListService) { }
+  }
 
   ngOnInit() {
     this.listChangeSub = this.listService.listChanged.subscribe(
@@ -39,6 +43,11 @@ export class SortableListComponent implements OnInit, OnDestroy {
   persistChanges() {
     console.log('SortableListComponent.persistChanges()');
     this.listService.persistChanges(this.list);
-
+  }
+  addNew() {
+    this.list.push(new ListItem(this.newItem.id, this.newItem.sortNum, this.newItem.name));
+    var nextId = this.listService.getNextId();
+    this.newItem = new ListItem(nextId, nextId, '');
+    this.persistChanges();
   }
 }
