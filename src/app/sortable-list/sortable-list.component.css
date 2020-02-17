@@ -1,5 +1,13 @@
 /* most of this was copied form https://material.angular.io/cdk/drag-drop/overview  */
 
+.container {
+  width: 400px;
+  max-width: 100%;
+  /*margin: 0 25px 25px 0;*/
+  margin: auto;
+  display: inline-block;
+  vertical-align: top;
+}
 .sortable-list {
   margin:auto;
   width: 250px;

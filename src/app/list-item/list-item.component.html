@@ -1,1 +1,4 @@
-<div class="list-item"  (dblclick)="editItem()" >{{item.name}}</div>
+<div [ngClass]="{ 'recycle-item': item.id === 909,
+     'list-item': item.id !== 909
+     }
+     "  (dblclick)="editItem()" >{{item.name}}</div>

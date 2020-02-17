@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
+import { CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop'
 import { Subscription } from 'rxjs';
 
 import { ListService } from '../services/list.service';
@@ -12,11 +12,14 @@ import { ListItem } from '../shared/list-item.model';
 export class SortableListComponent implements OnInit, OnDestroy {
 
   private list: ListItem[] = [];
+  private recycleItem = new ListItem(909, 909, 'Recycle');
+  private trash: ListItem[] = [];
   private listChangeSub: Subscription;
   private newItem: ListItem = null;
   constructor(private listService: ListService) {
     var nextId = this.listService.getNextId();
     this.newItem = new ListItem(nextId, nextId, '');
+    this.trash = [this.recycleItem];
 
   }
 
@@ -36,8 +39,17 @@ export class SortableListComponent implements OnInit, OnDestroy {
 
   //Taken from https://material.angular.io/cdk/drag-drop/overview
   drop(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.list, event.previousIndex, event.currentIndex);
-    this.persistChanges();
+    if (event.previousContainer === event.container) {
+      moveItemInArray(this.list, event.previousIndex, event.currentIndex);
+    } else {
+      transferArrayItem(event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex);
+        this.trash = [this.recycleItem];
+
+    }
+    //this.persistChanges();
   }
 
   persistChanges() {

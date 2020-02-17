@@ -1,9 +1,29 @@
-<div cdkDropList class="sortable-list" (cdkDropListDropped)="drop($event)">
-  <list-item *ngFor="let item of list" [item]="item" (persistChanges)="persistChanges()" cdkDrag></list-item>
-  <list-item [item]="newItem" (persistChanges)="addNew()" cdkDrag></list-item>
-</div>
 <div>
   <div mat-dialog-actions>
     <button class="mat-flat-button mat-primary" mat-button (click)="clearData()">Clear</button>
   </div>
 </div>
+
+<div class="container">
+  <div cdkDropList class="sortable-list"
+       #listList="cdkDropList"
+       [cdkDropListData]="list"
+       [cdkDropListConnectedTo]="trashList"
+       (cdkDropListDropped)="drop($event)">
+    <list-item *ngFor="let item of list" [item]="item" (persistChanges)="persistChanges()" cdkDrag></list-item>
+    <list-item [item]="newItem" (persistChanges)="addNew()" cdkDrag></list-item>
+  </div>
+
+</div>
+
+
+<div class="container">
+  <div cdkDropList class="sortable-list"
+       #trashList="cdkDropList"
+       [cdkDropListData]="trash"
+       [cdkDropListConnectedTo]="listList"
+       (cdkDropListDropped)="drop($event)">
+    <list-item *ngFor="let item of trash" [item]="item" cdkDrag></list-item>
+  </div>
+</div>
+
